@@ -28,7 +28,6 @@
 		2CD6E42F578171E5069D37A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39F80C98075A8173AD9D6DE1 /* MPS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MPS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C03B0ECB387D681CD446EEB /* MPS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MPS.entitlements; sourceTree = "<group>"; };
-		5DE976CCA1948663BA0F8CAF /* MPS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MPS.entitlements; sourceTree = "<group>"; };
 		6FB7462966EA3117C94EDB0C /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		78C95F6089429B0C4EC8A7DF /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		83F8BDEA22005A1BBFF0B782 /* ProxyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyService.swift; sourceTree = "<group>"; };
@@ -63,7 +62,6 @@
 		2DB9A53B607D8249DDF4529F /* MPS */ = {
 			isa = PBXGroup;
 			children = (
-				5DE976CCA1948663BA0F8CAF /* MPS.entitlements */,
 				C6ACD2267C9C9BEA38B21789 /* MPS */,
 			);
 			path = MPS;
@@ -286,7 +284,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = MPS/MPS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MPS/MPS/MPS.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -311,7 +309,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = MPS/MPS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MPS/MPS/MPS.entitlements;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

@@ -84,37 +84,41 @@ class ProxyService {
     func applyProfile(_ profile: ProxyProfile) {
         let services = listNetworkServices()
         for service in services {
-            // First, disable all proxy types
-            disableAllProxiesForService(service)
-
-            // Then, enable and configure each enabled item
-            for item in profile.items where item.enabled {
+            for item in profile.items {
                 switch item.type {
                 case .pac:
-                    if let url = item.pacURL {
+                    if item.enabled, let url = item.pacURL {
                         setAutoProxyURL(for: service, url: url)
-                        setProxyState(for: service, proxyType: "autoproxy", enabled: true)
+                        setAutoProxyState(for: service, enabled: true)
+                    } else {
+                        setAutoProxyState(for: service, enabled: false)
                     }
                 case .http:
-                    if let host = item.host, let port = item.port {
+                    if item.enabled, let host = item.host, let port = item.port {
                         setWebProxy(for: service, host: host, port: port)
-                        setProxyState(for: service, proxyType: "webproxy", enabled: true)
+                        setWebProxyState(for: service, enabled: true)
                         if let user = item.username, let pass = item.password {
                             setWebProxyAuth(for: service, username: user, password: pass)
                         }
+                    } else {
+                        setWebProxyState(for: service, enabled: false)
                     }
                 case .https:
-                    if let host = item.host, let port = item.port {
+                    if item.enabled, let host = item.host, let port = item.port {
                         setSecureWebProxy(for: service, host: host, port: port)
-                        setProxyState(for: service, proxyType: "securewebproxy", enabled: true)
+                        setSecureWebProxyState(for: service, enabled: true)
                         if let user = item.username, let pass = item.password {
                             setSecureWebProxyAuth(for: service, username: user, password: pass)
                         }
+                    } else {
+                        setSecureWebProxyState(for: service, enabled: false)
                     }
                 case .socks:
-                    if let host = item.host, let port = item.port {
+                    if item.enabled, let host = item.host, let port = item.port {
                         setSOCKSProxy(for: service, host: host, port: port)
-                        setProxyState(for: service, proxyType: "socksfirewallproxy", enabled: true)
+                        setSOCKSProxyState(for: service, enabled: true)
+                    } else {
+                        setSOCKSProxyState(for: service, enabled: false)
                     }
                 }
             }
@@ -131,10 +135,10 @@ class ProxyService {
     // MARK: - Private methods
 
     private func disableAllProxiesForService(_ service: String) {
-        setProxyState(for: service, proxyType: "webproxy", enabled: false)
-        setProxyState(for: service, proxyType: "securewebproxy", enabled: false)
-        setProxyState(for: service, proxyType: "socksfirewallproxy", enabled: false)
-        setProxyState(for: service, proxyType: "autoproxy", enabled: false)
+        setWebProxyState(for: service, enabled: false)
+        setSecureWebProxyState(for: service, enabled: false)
+        setSOCKSProxyState(for: service, enabled: false)
+        setAutoProxyState(for: service, enabled: false)
     }
 
     private func readPACState(for service: String) -> ProxyStateItem {
@@ -193,9 +197,20 @@ class ProxyService {
         return ProxyStateItem(enabled: enabled, host: host, port: port, url: nil)
     }
 
-    private func setProxyState(for service: String, proxyType: String, enabled: Bool) {
-        let state = enabled ? "on" : "off"
-        _ = runCommand(arguments: ["-setproxystate", service, proxyType, state])
+    private func setWebProxyState(for service: String, enabled: Bool) {
+        _ = runCommand(arguments: ["-setwebproxystate", service, enabled ? "on" : "off"])
+    }
+
+    private func setSecureWebProxyState(for service: String, enabled: Bool) {
+        _ = runCommand(arguments: ["-setsecurewebproxystate", service, enabled ? "on" : "off"])
+    }
+
+    private func setSOCKSProxyState(for service: String, enabled: Bool) {
+        _ = runCommand(arguments: ["-setsocksfirewallproxystate", service, enabled ? "on" : "off"])
+    }
+
+    private func setAutoProxyState(for service: String, enabled: Bool) {
+        _ = runCommand(arguments: ["-setautoproxystate", service, enabled ? "on" : "off"])
     }
 
     private func setWebProxy(for service: String, host: String, port: Int) {

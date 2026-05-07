@@ -22,7 +22,7 @@ targets:
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "5.9"
         MACOSX_DEPLOYMENT_TARGET: "13.0"
-        CODE_SIGN_ENTITLEMENTS: MPS/MPS.entitlements
+        CODE_SIGN_ENTITLEMENTS: MPS/MPS/MPS.entitlements
         INFOPLIST_FILE: MPS/MPS/Resources/Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: false
@@ -35,6 +35,6 @@ targets:
           CODE_SIGN_IDENTITY: "-"
           CODE_SIGN_STYLE: Automatic
     entitlements:
-      path: MPS/MPS.entitlements
+      path: MPS/MPS/MPS.entitlements
       properties:
         com.apple.security.app-sandbox: false
