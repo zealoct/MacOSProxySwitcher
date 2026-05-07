@@ -76,9 +76,29 @@ class ProxyService {
     func readAllProxyState() -> SystemProxyState {
         let services = listNetworkServices()
         if services.isEmpty { return .empty() }
-        // Use the first active service (typically Wi-Fi) as representative
-        let state = readProxyState(for: services[0])
-        return state
+
+        let states = services.map { readProxyState(for: $0) }
+
+        func aggregate(items: [ProxyStateItem]) -> ProxyStateItem {
+            let enabledItems = items.filter { $0.enabled }
+            if enabledItems.isEmpty {
+                return ProxyStateItem(enabled: false, host: nil, port: nil, url: nil)
+            }
+            if enabledItems.count == items.count {
+                // All enabled — use first one's settings
+                return enabledItems[0]
+            }
+            // Mixed state: some enabled, some disabled.
+            // Report as enabled but with nil values so no profile can match.
+            return ProxyStateItem(enabled: true, host: nil, port: nil, url: nil)
+        }
+
+        return SystemProxyState(
+            pac: aggregate(items: states.map { $0.pac }),
+            http: aggregate(items: states.map { $0.http }),
+            https: aggregate(items: states.map { $0.https }),
+            socks: aggregate(items: states.map { $0.socks })
+        )
     }
 
     func applyProfile(_ profile: ProxyProfile) {

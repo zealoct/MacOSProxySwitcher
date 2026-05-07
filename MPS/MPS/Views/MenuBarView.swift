@@ -8,19 +8,32 @@ struct MenuBarView: View {
         Text(viewModel.currentProxyDescription)
             .font(.caption)
 
+        ForEach(viewModel.proxyDetailLines, id: \.self) { line in
+            Text(line)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+
         Divider()
 
-        Button("Direct / No Proxy") {
-            viewModel.switchToDirect()
-        }
-        .checkmark(visible: viewModel.activeProfileId == nil)
-
-        ForEach(viewModel.profiles) { profile in
-            Button(profile.name) {
-                viewModel.switchToProfile(id: profile.id)
+        Picker(selection: Binding(
+            get: { viewModel.activeProfileId },
+            set: { newId in
+                DispatchQueue.main.async {
+                    if let id = newId {
+                        viewModel.switchToProfile(id: id)
+                    } else {
+                        viewModel.switchToDirect()
+                    }
+                }
             }
-            .checkmark(visible: viewModel.activeProfileId == profile.id)
+        ), label: EmptyView()) {
+            Text("Direct / No Proxy").tag(nil as UUID?)
+            ForEach(viewModel.profiles) { profile in
+                Text(profile.name).tag(profile.id as UUID?)
+            }
         }
+        .pickerStyle(.inline)
 
         Divider()
 
@@ -33,18 +46,6 @@ struct MenuBarView: View {
 
         Button("Quit MPS") {
             NSApp.terminate(nil)
-        }
-    }
-}
-
-extension Button {
-    func checkmark(visible: Bool) -> some View {
-        HStack {
-            if visible {
-                Image(systemName: "checkmark")
-            }
-            self
-            Spacer()
         }
     }
 }

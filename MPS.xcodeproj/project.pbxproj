@@ -20,6 +20,7 @@
 		7C37B0711A2FB1792B5A8749 /* MPSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288A4340151AA24F3E6DFCDC /* MPSApp.swift */; };
 		8548A56DAF515F58AD61452D /* ProxyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F8BDEA22005A1BBFF0B782 /* ProxyService.swift */; };
 		BA4317F011891680C0D67010 /* ProxyType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF1DA285F6A36602BFB3F3 /* ProxyType.swift */; };
+		C450FDF5C7B0FA26FF58A0F7 /* ProxyMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C39E1DBB98425D5D3370F5FC /* ProxyMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		BE18615168140DB6503A33DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BF7A71C1DD1B6568E0988202 /* ProxyProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyProfile.swift; sourceTree = "<group>"; };
 		C244EB5021E640F075AD6542 /* ProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditView.swift; sourceTree = "<group>"; };
+		C39E1DBB98425D5D3370F5FC /* ProxyMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyMonitor.swift; sourceTree = "<group>"; };
 		DD943948F4BB4369C32B742A /* ManageConfigurationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageConfigurationsView.swift; sourceTree = "<group>"; };
 		F6DD4B39875A3D5137BBC363 /* ProxyItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyItemRowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,6 +72,7 @@
 		93BBEF73A93D350D416EBF7D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				C39E1DBB98425D5D3370F5FC /* ProxyMonitor.swift */,
 				83F8BDEA22005A1BBFF0B782 /* ProxyService.swift */,
 				6FB7462966EA3117C94EDB0C /* StorageService.swift */,
 			);
@@ -213,6 +216,7 @@
 				5833F83A9D0060ECA0C2B2FA /* ProfileEditView.swift in Sources */,
 				40034C6429F67DCE709C31F4 /* ProxyItem.swift in Sources */,
 				34686D782C96F8359DB3ADEE /* ProxyItemRowView.swift in Sources */,
+				C450FDF5C7B0FA26FF58A0F7 /* ProxyMonitor.swift in Sources */,
 				060C06CF186C4F0E4D2BAC48 /* ProxyProfile.swift in Sources */,
 				8548A56DAF515F58AD61452D /* ProxyService.swift in Sources */,
 				BA4317F011891680C0D67010 /* ProxyType.swift in Sources */,
