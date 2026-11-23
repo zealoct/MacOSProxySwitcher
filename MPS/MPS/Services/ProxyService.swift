@@ -1,4 +1,5 @@
 import Foundation
+import SystemConfiguration
 
 struct ProxyStateItem: Equatable {
     var enabled: Bool
@@ -19,6 +20,59 @@ struct SystemProxyState: Equatable {
             http: ProxyStateItem(enabled: false, host: nil, port: nil, url: nil),
             https: ProxyStateItem(enabled: false, host: nil, port: nil, url: nil),
             socks: ProxyStateItem(enabled: false, host: nil, port: nil, url: nil)
+        )
+    }
+
+    static func fromProxySettings(_ settings: [String: Any]) -> SystemProxyState {
+        func hostPortState(enabled: CFString, host: CFString, port: CFString) -> ProxyStateItem {
+            ProxyStateItem(
+                enabled: (settings[enabled as String] as? NSNumber)?.boolValue ?? false,
+                host: settings[host as String] as? String,
+                port: (settings[port as String] as? NSNumber)?.intValue,
+                url: nil
+            )
+        }
+
+        return SystemProxyState(
+            pac: ProxyStateItem(
+                enabled: (settings[kSCPropNetProxiesProxyAutoConfigEnable as String] as? NSNumber)?.boolValue ?? false,
+                host: nil,
+                port: nil,
+                url: settings[kSCPropNetProxiesProxyAutoConfigURLString as String] as? String
+            ),
+            http: hostPortState(
+                enabled: kSCPropNetProxiesHTTPEnable,
+                host: kSCPropNetProxiesHTTPProxy,
+                port: kSCPropNetProxiesHTTPPort
+            ),
+            https: hostPortState(
+                enabled: kSCPropNetProxiesHTTPSEnable,
+                host: kSCPropNetProxiesHTTPSProxy,
+                port: kSCPropNetProxiesHTTPSPort
+            ),
+            socks: hostPortState(
+                enabled: kSCPropNetProxiesSOCKSEnable,
+                host: kSCPropNetProxiesSOCKSProxy,
+                port: kSCPropNetProxiesSOCKSPort
+            )
+        )
+    }
+
+    func makeProfile(name: String) -> ProxyProfile {
+        let states: [(ProxyType, ProxyStateItem)] = [
+            (.pac, pac), (.http, http), (.https, https), (.socks, socks)
+        ]
+        return ProxyProfile(
+            id: UUID(),
+            name: name,
+            items: states.map { type, state in
+                var item = ProxyItem.create(type: type)
+                item.enabled = state.enabled
+                item.pacURL = state.url
+                item.host = state.host
+                item.port = state.port
+                return item
+            }
         )
     }
 
@@ -48,6 +102,15 @@ struct SystemProxyState: Equatable {
 
 class ProxyService {
     private let networksetupPath = "/usr/sbin/networksetup"
+
+    func readCurrentProxyState() -> SystemProxyState? {
+        // Capture the effective settings, preserving addresses even when other
+        // network services have different proxy configurations.
+        guard let settings = SCDynamicStoreCopyProxies(nil) as? [String: Any] else {
+            return nil
+        }
+        return SystemProxyState.fromProxySettings(settings)
+    }
 
     func listNetworkServices() -> [String] {
         let output = runCommand(arguments: ["-listallnetworkservices"])

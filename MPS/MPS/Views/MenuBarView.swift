@@ -42,6 +42,13 @@ struct MenuBarView: View {
             openWindow(id: "manage-configurations")
         }
 
+        Button("Save current") {
+            viewModel.saveCurrentProfile()
+            NSApp.activate(ignoringOtherApps: true)
+            openWindow(id: "manage-configurations")
+        }
+        .disabled(viewModel.isSavingCurrentProfile)
+
         Divider()
 
         Button("Quit MPS") {

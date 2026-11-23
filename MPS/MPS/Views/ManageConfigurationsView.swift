@@ -2,13 +2,12 @@ import SwiftUI
 
 struct ManageConfigurationsView: View {
     @ObservedObject var viewModel: ProxyViewModel
-    @State private var selectedProfileId: UUID?
     @State private var showDeleteConfirmation = false
 
     var body: some View {
         NavigationSplitView {
             VStack(spacing: 0) {
-                List(viewModel.profiles, selection: $selectedProfileId) { profile in
+                List(viewModel.profiles, selection: $viewModel.selectedProfileId) { profile in
                     Text(profile.name)
                         .tag(profile.id)
                 }
@@ -20,7 +19,7 @@ struct ManageConfigurationsView: View {
                     Button(action: { showDeleteConfirmation = true }) {
                         Image(systemName: "minus")
                     }
-                    .disabled(selectedProfileId == nil)
+                    .disabled(viewModel.selectedProfileId == nil)
                     Spacer()
                 }
                 .padding(.horizontal, 12)
@@ -40,35 +39,47 @@ struct ManageConfigurationsView: View {
                 }
             }
         } detail: {
-            if let selectedId = selectedProfileId,
+            if viewModel.isSavingCurrentProfile {
+                ProgressView("Reading current proxy settings...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let selectedId = viewModel.selectedProfileId,
                let index = viewModel.profiles.firstIndex(where: { $0.id == selectedId }) {
                 ProfileEditView(profile: $viewModel.profiles[index], onSave: {
                     viewModel.updateProfile(viewModel.profiles[index])
                 })
+                .id(selectedId)
             } else {
                 Text("Select a profile to edit")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .onAppear {
-            if selectedProfileId == nil && !viewModel.profiles.isEmpty {
-                selectedProfileId = viewModel.profiles.first?.id
+            if viewModel.selectedProfileId == nil && !viewModel.profiles.isEmpty {
+                viewModel.selectedProfileId = viewModel.profiles.first?.id
             }
+        }
+        .alert("Couldn't Save Current Settings", isPresented: Binding(
+            get: { viewModel.saveCurrentError != nil },
+            set: { if !$0 { viewModel.saveCurrentError = nil } }
+        )) {
+            Button("OK", role: .cancel) { viewModel.saveCurrentError = nil }
+        } message: {
+            Text(viewModel.saveCurrentError ?? "")
         }
     }
 
     private var selectedProfileName: String? {
-        viewModel.profiles.first(where: { $0.id == selectedProfileId })?.name
+        viewModel.profiles.first(where: { $0.id == viewModel.selectedProfileId })?.name
     }
 
     private func addProfile() {
         let profile = viewModel.addProfile(name: "New Profile")
-        selectedProfileId = profile.id
+        viewModel.selectedProfileId = profile.id
     }
 
     private func deleteSelectedProfile() {
-        guard let id = selectedProfileId else { return }
+        guard let id = viewModel.selectedProfileId else { return }
         viewModel.deleteProfile(id: id)
-        selectedProfileId = viewModel.profiles.first?.id
+        viewModel.selectedProfileId = viewModel.profiles.first?.id
     }
 }

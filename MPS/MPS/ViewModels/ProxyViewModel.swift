@@ -3,16 +3,26 @@ import Combine
 
 class ProxyViewModel: ObservableObject {
     @Published var profiles: [ProxyProfile] = []
+    @Published var selectedProfileId: UUID?
     @Published var activeProfileId: UUID?
+    @Published private(set) var isSavingCurrentProfile = false
+    @Published var saveCurrentError: String?
     @Published var currentProxyDescription: String = "Direct connection (No proxy)"
     @Published var proxyDetailLines: [String] = ["PAC: disabled", "HTTP: disabled", "HTTPS: disabled", "SOCKS: disabled"]
 
-    private let storageService = StorageService()
-    private let proxyService = ProxyService()
-    private let proxyMonitor = ProxyMonitor()
+    private let storageService: StorageService
+    private let proxyService: ProxyService
+    private let proxyMonitor: ProxyMonitor
     private let workQueue = DispatchQueue(label: "mps.proxy", qos: .userInitiated)
 
-    init() {
+    init(
+        storageService: StorageService = StorageService(),
+        proxyService: ProxyService = ProxyService(),
+        proxyMonitor: ProxyMonitor = ProxyMonitor()
+    ) {
+        self.storageService = storageService
+        self.proxyService = proxyService
+        self.proxyMonitor = proxyMonitor
         loadFromStorage()
         proxyMonitor.start { [weak self] in
             self?.workQueue.async {
@@ -139,6 +149,37 @@ class ProxyViewModel: ObservableObject {
         profiles.append(profile)
         storageService.saveProfiles(profiles)
         return profile
+    }
+
+    func saveCurrentProfile() {
+        guard !isSavingCurrentProfile else { return }
+        isSavingCurrentProfile = true
+        saveCurrentError = nil
+
+        workQueue.async {
+            let state = self.proxyService.readCurrentProxyState()
+
+            DispatchQueue.main.async {
+                self.isSavingCurrentProfile = false
+                guard let state = state else {
+                    self.saveCurrentError = "The current system proxy settings could not be read. Please try again."
+                    return
+                }
+
+                let baseName = "Current Proxy"
+                var name = baseName
+                var suffix = 2
+                while self.profiles.contains(where: { $0.name == name }) {
+                    name = "\(baseName) \(suffix)"
+                    suffix += 1
+                }
+
+                let profile = state.makeProfile(name: name)
+                self.profiles.append(profile)
+                self.storageService.saveProfiles(self.profiles)
+                self.selectedProfileId = profile.id
+            }
+        }
     }
 
     func deleteProfile(id: UUID) {
