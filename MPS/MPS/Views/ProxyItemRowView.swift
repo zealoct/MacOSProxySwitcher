@@ -5,20 +5,17 @@ struct ProxyItemRowView: View {
     var onSave: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Toggle(item.type.rawValue, isOn: $item.enabled)
-                    .onChange(of: item.enabled) { _ in onSave() }
-                Spacer()
-            }
+        VStack(alignment: .leading, spacing: 4) {
+            Toggle(item.type.rawValue, isOn: $item.enabled)
+                .onChange(of: item.enabled) { _ in onSave() }
 
             if item.enabled {
                 switch item.type {
                 case .pac:
-                    HStack {
+                    HStack(spacing: 4) {
                         Text("URL:")
-                            .frame(width: 60, alignment: .trailing)
-                        TextField("PAC URL", text: Binding(
+                            .frame(width: 38, alignment: .trailing)
+                        TextField("", text: Binding(
                             get: { item.pacURL ?? "" },
                             set: { item.pacURL = $0.isEmpty ? nil : $0; onSave() }
                         ))
@@ -26,55 +23,58 @@ struct ProxyItemRowView: View {
                     }
 
                 case .http, .https:
-                    proxyHostPortFields()
-                    proxyAuthFields()
+                    proxyHostPortRow()
+                    proxyAuthRow()
 
                 case .socks:
-                    proxyHostPortFields()
+                    proxyHostPortRow()
                 }
             }
         }
         .padding(.vertical, 4)
     }
 
-    private func proxyHostPortFields() -> some View {
-        HStack {
+    private func proxyHostPortRow() -> some View {
+        HStack(spacing: 4) {
             Text("Host:")
-                .frame(width: 60, alignment: .trailing)
-            TextField("Host", text: Binding(
+                .frame(width: 38, alignment: .trailing)
+            TextField("", text: Binding(
                 get: { item.host ?? "" },
                 set: { item.host = $0.isEmpty ? nil : $0; onSave() }
             ))
             .textFieldStyle(.roundedBorder)
+            .frame(width: 150)
 
             Text("Port:")
-                .frame(width: 60, alignment: .trailing)
-            TextField("Port", value: Binding(
+                .frame(width: 38, alignment: .trailing)
+            TextField("", value: Binding(
                 get: { item.port ?? 0 },
                 set: { item.port = $0 == 0 ? nil : $0; onSave() }
             ), format: .number)
             .textFieldStyle(.roundedBorder)
-            .frame(width: 80)
+            .frame(width: 70)
         }
     }
 
-    private func proxyAuthFields() -> some View {
-        HStack {
+    private func proxyAuthRow() -> some View {
+        HStack(spacing: 4) {
             Text("User:")
-                .frame(width: 60, alignment: .trailing)
-            TextField("Username", text: Binding(
+                .frame(width: 38, alignment: .trailing)
+            TextField("", text: Binding(
                 get: { item.username ?? "" },
                 set: { item.username = $0.isEmpty ? nil : $0; onSave() }
             ))
             .textFieldStyle(.roundedBorder)
+            .frame(width: 150)
 
             Text("Pass:")
-                .frame(width: 60, alignment: .trailing)
-            SecureField("Password", text: Binding(
+                .frame(width: 38, alignment: .trailing)
+            SecureField("", text: Binding(
                 get: { item.password ?? "" },
                 set: { item.password = $0.isEmpty ? nil : $0; onSave() }
             ))
             .textFieldStyle(.roundedBorder)
+            .frame(width: 70)
         }
     }
 }

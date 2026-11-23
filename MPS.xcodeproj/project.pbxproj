@@ -295,14 +295,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MPS/MPS/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MacProxySwitcher;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				LSUIElement = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mps.app;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.macproxyswitcher.app;
 				PRODUCT_NAME = MPS;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
@@ -320,14 +321,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MPS/MPS/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MacProxySwitcher;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				LSUIElement = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mps.app;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.macproxyswitcher.app;
 				PRODUCT_NAME = MPS;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;

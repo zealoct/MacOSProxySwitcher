@@ -7,24 +7,26 @@ struct ManageConfigurationsView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(viewModel.profiles, selection: $selectedProfileId) { profile in
-                Text(profile.name)
-                    .tag(profile.id)
-            }
-            .navigationTitle("Profiles")
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
+            VStack(spacing: 0) {
+                List(viewModel.profiles, selection: $selectedProfileId) { profile in
+                    Text(profile.name)
+                        .tag(profile.id)
+                }
+
+                HStack(spacing: 12) {
                     Button(action: addProfile) {
                         Image(systemName: "plus")
                     }
-                }
-                ToolbarItem(placement: .cancellationAction) {
                     Button(action: { showDeleteConfirmation = true }) {
                         Image(systemName: "minus")
                     }
                     .disabled(selectedProfileId == nil)
+                    Spacer()
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
             }
+            .navigationTitle("Profiles")
             .alert("Delete Profile?", isPresented: $showDeleteConfirmation) {
                 Button("Cancel", role: .cancel) {}
                 Button("Delete", role: .destructive) {
